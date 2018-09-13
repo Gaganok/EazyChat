@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Chat</title>
+	<link href='http://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet' type='text/css'>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+	<link rel="stylesheet" type="text/css" href='css/style.css'>
+</head>
+<body>
+	<header>
+		<div class="head_colors" style="background-color: #635960"></div>
+		<div class="head_colors" style="background-color: #8b8e59"></div>
+		<div class="head_colors" style="background-color: #eada7d"></div>
+		<div class="head_colors" style="background-color: #fffecd"></div>
+		<div class="head_colors" style="background-color: #7bc3ab"></div>
+		<div class="head_colors" style="background-color: #635960"></div>
+		<div class="head_colors" style="background-color: #8b8e59"></div>
+		<div class="head_colors" style="background-color: #eada7d"></div>
+		<div class="head_colors" style="background-color: #fffecd"></div>
+		<div class="head_colors" style="background-color: #7bc3ab"></div>
+	</header> 	
+	<div class="Logo">
+		Easy Chat 
+	</div>
+	<div class="chat_group">
+		<div class="chat_window_container">
+			<div class="chat_window">
+				
+			</div>
+		</div>
+		<input type="text" class="chat_input">
+		<button type="button" class="chat_button" onclick="Send()">Send</button>
+	</div>
+	<div class="form_div">	
+		<form >
+	  		<div class="form_group">
+	  		  <label for="Username" class="form_label">Entre your name</label><br/>
+	   		  <input type="username" name="username" class="form_input" id="username" placeholder=" John Doe ">
+		  	</div>
+		  	<div class="form_group">
+		    	<label for="Password" class="form_label">Enter Password</label><br/>
+		   		<input type="password" name="password" class="form_input"  id="password" placeholder=" ***** "><br/>
+		  	</div>
+	  			<button type="submit" class="form_button" >Submit</button>	
+		</form>
+	</div>	
+	<script>	
+		$(document).ready(function(){
+			$("form").submit(function(event){
+				var name = $('#username').val();
+				var pass = $('#password').val();
+		   		$.ajax({
+			    	method: "POST",
+				    url: "index.php",
+				   	data: { username : name, password : pass }
+				   	}).done(function( msg ) {
+				   		if (msg == 'Success') {
+				   			$('form').hide();
+			    			$('.chat_group').show();
+			    			$('.Logo').css({'margin-top':'5%'});
+			    			setInterval( Chat, 1000); 
+				    	}else{
+				   			$('#password').css('border','1px solid red');
+				   		}										    		
+				});
+			    	    event.preventDefault();
+			});
+	    });
+	     
+		function Chat(){
+			$.ajax({
+	            url:'index.php',
+		        method:'POST',
+                dataType:'json',
+                success: function(data){
+                	$('.chat_window').text('');
+				    for (var i = 0; i < data.length; i++) {
+	                	$('.chat_window').append("<br />"+' ['+data[i].time+'    ] <span>'+data[i].username+'</span>: '+data[i].message);
+				    };
+                }
+		    })
+		};
+	    function Send(){	    
+	   		var name = $('#username').val();
+	    	var message = $('.chat_input').val();
+	    	$.ajax({
+		    	method: "POST",
+			    url: "index.php",
+			   	data: { username : name, message : message}
+				}).done(function( msg ) {
+	   				console.log(msg);
+	   				$('.chat_input').val('');
+			});	
+		};
+
+	</script>
+
+
+				
+</body>
+</html>
